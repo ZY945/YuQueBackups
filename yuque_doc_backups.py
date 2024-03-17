@@ -19,6 +19,7 @@ yq_base_url = "https://www.yuque.com/api/v2/{}"
 backups_base_dir = os.path.join(os.getcwd(), "backups")
 backups_origin_md_dir = os.path.join(backups_base_dir, "origin_md")
 doc_count = 0
+sleep_wait = randint(1, 1)# API调用间隙(防止被拒绝请求)
 
 # 判断目录是否存在，不存在新建
 def is_dir_existed(file_path, mkdir=True):
@@ -137,8 +138,7 @@ def fetch_toc_list(repo_id, repo_name):
     if toc_list_resp:
         toc_list_json = toc_list_resp.json()
         for toc in toc_list_json['data']:
-            toc_node = TocNode(toc.get('type'), toc.get('title'), toc.get('uuid'), toc.get('parent_uuid'),
-                               toc.get('doc_id'), repo_id, repo_name)
+            toc_node = TocNode(toc.get('type'), toc.get('title'), toc.get('uuid'), toc.get('parent_uuid'),toc.get('doc_id'), repo_id, repo_name)
             id_order_dict[toc_node.node_uuid] = toc_node
             # 顶级目录
             if toc_node.parent_uuid is None or len(toc_node.parent_uuid) == 0:
@@ -155,16 +155,12 @@ def fetch_toc_list(repo_id, repo_name):
 
 # 递归访问目录树的测试方法
 def traverse_nodes(node, save_path=""):
-    # 格式化节点标题
-    unformat_node_title = "{}".format(node.node_title)
-    format_node_title = unformat_node_title.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", "；")
-    # 追加节点标题到当前路径
-    save_path += "{}{}".format(os.sep, format_node_title)
-    # 生成文件路径
+    save_path += "{}{}".format(os.sep, node.node_title)
     if node.child_node_list is None or len(node.child_node_list) == 0:
         if node.node_type == "DOC":
-            format_repo_name = node.repo_name.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", "；")
-            md_save_path = "{}{}{}{}.md".format(backups_origin_md_dir, os.sep, format_repo_name, save_path)
+            format_repo_name = node.repo_name.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", ";")
+            format_save_path = save_path.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", ";")
+            md_save_path = "{}{}{}{}.md".format(backups_origin_md_dir, os.sep, format_repo_name, format_save_path)
             last_sep_index = md_save_path.rfind(os.sep)
             if last_sep_index != -1:
                 save_dir = md_save_path[:last_sep_index]
@@ -187,5 +183,5 @@ def fetch_doc_detail(node, save_path):
             write_text_to_file(doc_detail, save_path)
             doc_count += 1
             print("第【{}】篇文档备份成功...".format(doc_count))
-            time.sleep(randint(2, 8))  # 随机休眠2-8s，细水长流~
+            time.sleep(sleep_wait)  # 随机休眠2-8s,防止请求被拦截,这个可以看语雀文档,有相关限制
     return doc_count
