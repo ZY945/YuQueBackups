@@ -31,8 +31,9 @@ if __name__ == '__main__':
         yq_repo_list = fetch_repo_list(yq_user_id)
 
         for yq_repo in yq_repo_list:
-            if yq_repo.repo_name=='博客整理':
-                continue
+           # 可以自定义处理的内容
+            # if yq_repo.repo_name=='博客整理':
+            #     continue
             print("开始拉取【{}】仓库下的文档".format(yq_repo.repo_name))
             fetch_toc_list(yq_repo.repo_id, yq_repo.repo_name)
         print("文档备份完毕，共记备份文档【{}】篇,共计耗时：{:.2f}ms,开始执行Markdown文件批量本地化...".format(doc_count,(time.time() - start_time) * 1000))
