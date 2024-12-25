@@ -158,8 +158,10 @@ def traverse_nodes(node, save_path=""):
     save_path += "{}{}".format(os.sep, node.node_title)
     if node.child_node_list is None or len(node.child_node_list) == 0:
         if node.node_type == "DOC":
-            format_repo_name = node.repo_name.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", ";")
-            format_save_path = save_path.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", ";")
+            # format_repo_name = node.repo_name.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", ";")
+            # format_save_path = save_path.replace("|", "_").replace("/", "、").replace('"', "'").replace(":", ";")
+            format_repo_name = node.repo_name.replace("|", "_").replace('"', "'").replace(":", ";")
+            format_save_path = save_path.replace("|", "_").replace('"', "'").replace(":", ";")
             md_save_path = "{}{}{}{}.md".format(backups_origin_md_dir, os.sep, format_repo_name, format_save_path)
             last_sep_index = md_save_path.rfind(os.sep)
             if last_sep_index != -1:
