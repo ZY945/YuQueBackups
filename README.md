@@ -1,3 +1,6 @@
+---
+如果是mac系统,记得切换到mac分支
+---
 ```bash
 # 1.创建虚拟环境
 python -m venv test-env
